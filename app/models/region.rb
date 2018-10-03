@@ -18,25 +18,25 @@ class Region < ActiveRecord::Base
     if state.length != 2
       puts "Please enter a two digit state abbreviation. Example: please enter MD for Maryland."
     elsif region_1.include?(state)
-      1
+      Region.find(1)
     elsif region_2.include?(state)
-      2
+      Region.find(2)
     elsif region_3.include?(state)
-      3
+      Region.find(3)
     elsif region_4.include?(state)
-      4
+      Region.find(4)
     elsif region_5.include?(state)
-      5
+      Region.find(5)
     elsif region_6.include?(state)
-      6
+      Region.find(6)
     elsif region_7.include?(state)
-      7
+      Region.find(7)
     elsif region_8.include?(state)
-      8
+      Region.find(8)
     elsif region_9.include?(state)
-      9
+      Region.find(9)
     elsif region_10.include?(state)
-      10
+      Region.find(10)
     else
       puts "Please enter a valid state abbreviation"
     end
