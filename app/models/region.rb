@@ -52,4 +52,45 @@ class Region < ActiveRecord::Base
 		consumption
 	end
 
+	def find_periods_for_region
+		Period.find_periods_for_region(self.id)
+	end
+
+	def create_years
+		(1990..2019).map do |num|
+			[num, 1]
+		end
+	end
+
+	def translate_bill_to_consumption(bill, period_name)
+		price = self.periods.find_by(name: period_name).price
+		consumption = bill / price
+		consumption
+	end
+
+
+	def regression(period)
+		x_data = self.create_years
+		#prices_array
+		y_data = self.find_prices_for_region.flatten
+
+		#Create regression model
+		linear_regression = RubyLinearRegression.new
+
+		# Load training data
+		linear_regression.load_training_data(x_data, y_data)
+		#binding.pry
+
+		# Train the model using the normal equation
+		linear_regression.train_normal_equation
+		binding.pry
+
+
+		prediction_data = [period]
+
+		predicted_price = linear_regression.predict(prediction_data)
+
+
+	end
+
 end

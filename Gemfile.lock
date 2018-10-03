@@ -45,6 +45,7 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
+    ruby_linear_regression (0.1.5)
     rubyzip (1.2.2)
     selenium-webdriver (3.14.0)
       childprocess (~> 0.5)
@@ -77,6 +78,7 @@ DEPENDENCIES
   pry
   require_all
   rest-client
+  ruby_linear_regression
   sinatra-activerecord
   sqlite3
   watir
