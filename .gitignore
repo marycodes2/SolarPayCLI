@@ -10,5 +10,4 @@ tmp
 *.log
 *.swp
 
-db/*.db
-db/schema.rb
+**/*.db
