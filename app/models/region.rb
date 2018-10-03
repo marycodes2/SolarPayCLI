@@ -46,4 +46,12 @@ class Region < ActiveRecord::Base
     Period.find_prices_for_region(self.id)
   end
 
+  def find_periods_for_region
+    Period.find_periods_for_region(self.id)
+  end
+
+  # def get_regression
+  #   prices = self.find_prices_for_region
+  # end
+
 end
