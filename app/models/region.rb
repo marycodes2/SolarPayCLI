@@ -42,4 +42,8 @@ class Region < ActiveRecord::Base
     end
   end
 
+  def find_prices_for_region
+    Period.find_prices_for_region(self.id)
+  end
+
 end
