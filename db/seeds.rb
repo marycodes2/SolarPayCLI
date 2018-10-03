@@ -1,4 +1,5 @@
 require 'rest-client'
+require 'pry'
 #api link: https://www.eia.gov/opendata/qb.php?category=1039863
 api_key = 'ebd1dbc8bf695423c209d37473578b0d'
 
@@ -21,9 +22,10 @@ def create_region_instance(return_hash)
   Region.find_or_create_by(:name => return_hash["series"][0]["geography"])
 end
 
-def create_period_instance(return_hash, instance_id)
+def create_period_instances(return_hash, instance_id, region_instance)
   return_hash["series"][0]["data"].each do |period_price_array|
-    Period.find_or_create_by(:name => period_price_array[0], :price => period_price_array[1].to_f, :region_id => instance_id)
+    period_instance = Period.find_or_create_by(:name => period_price_array[0], :price => period_price_array[1].to_f, :region_id => instance_id)
+    region_instance.periods << period_instance
   end
 end
 
@@ -36,9 +38,8 @@ def save_apis_to_database(series_id_list, api_key)
     api_address = create_api_address(series_id, api_key)
     return_hash = get_data_from_api(api_address)
     region_instance = create_region_instance(return_hash)
-    instance_id = get_region_id(instance)
-    period_instance = create_period_instance(return_hash, instance_id)
-    region_instance.periods << period_instance
+    instance_id = get_region_id(region_instance)
+    period_instance_list = create_period_instances(return_hash, instance_id, region_instance)
   end
 end
 
