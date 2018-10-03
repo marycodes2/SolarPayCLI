@@ -9,13 +9,17 @@ class Cost < ActiveRecord::Base
 		end
 	end
 
+	#either gets avg_cost from DB or uses Scraper.rb to scrape new avg_cost
+
 	def get_avg_cost
 		if !self.zip_code
 			raise NoMethodError.new("#{self} must have a valid zip code")
 		end
-		avg_cost = Scraper.new(self.zip_code).avg_cost
-		self.update(avg_cost: avg_cost)
-		avg_cost
+		if !avg_cost
+			avg_cost = Scraper.new(self.zip_code).avg_cost
+			self.update(avg_cost: avg_cost)
+		end
+		self.avg_cost
 	end
 
 	#cost = Cost.create

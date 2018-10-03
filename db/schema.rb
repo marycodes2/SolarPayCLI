@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 4) do
+ActiveRecord::Schema.define(version: 5) do
 
   create_table "costs", force: :cascade do |t|
     t.string "zip_code"
@@ -29,10 +29,10 @@ ActiveRecord::Schema.define(version: 4) do
 
   create_table "users", force: :cascade do |t|
     t.string  "name"
-    t.float   "q1_bill"
-    t.float   "q2_bill"
-    t.float   "q3_bill"
-    t.float   "q4_bill"
+    t.float   "q1_consumption"
+    t.float   "q2_consumption"
+    t.float   "q3_consumption"
+    t.float   "q4_consumption"
     t.integer "cost_id"
     t.integer "region_id"
   end
