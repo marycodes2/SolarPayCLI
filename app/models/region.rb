@@ -1,18 +1,8 @@
 class Region < ActiveRecord::Base
   has_many :periods
 
-  def prices
-    self.periods.map do |period|
-      period.price
-    end
-  end
+  def return_user_region
 
-  def periods
-
-  end
-
-  def prediction
-
-  end
+  end 
 
 end
