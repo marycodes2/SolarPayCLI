@@ -108,12 +108,6 @@ class Region < ActiveRecord::Base
           break if total_cost > cost_of_solar
         else
           total_cost += self.q1_2019 * q1_consumption
-          puts "slope of region"
-          puts self.q1_2019
-          puts "consumption"
-          puts q1_consumption
-          puts "total_cost"
-          puts total_cost
           break_even_quarter = quarter
           break if total_cost > cost_of_solar
         end
@@ -121,4 +115,22 @@ class Region < ActiveRecord::Base
     break_even_quarter
   end
 
+  def return_revenue_by_year(cost_of_solar, year, q1_consumption, q2_consumption, q3_consumption, q4_consumption)
+    get_2019_price_per_kwh
+    cost_of_solar = cost_of_solar.to_i
+    quarters = create_years_array(2019, year)
+    total_cost = 0
+      quarters.each do |quarter|
+        if quarter.to_s.split('.')[1].to_i == 25
+          total_cost += self.q2_2019 * q2_consumption
+        elsif quarter.to_s.split('.')[1].to_i == 5
+          total_cost += self.q3_2019 * q3_consumption
+        elsif quarter.to_s.split('.')[1].to_i == 75
+          total_cost += self.q4_2019 * q4_consumption
+        else
+          total_cost += self.q1_2019 * q1_consumption
+        end
+      end
+    total_cost - cost_of_solar
+  end
 end
