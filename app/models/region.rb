@@ -88,56 +88,57 @@ class Region < ActiveRecord::Base
 		@q3_2019 = (self.find_prices_for_region[1] / 100)
 		@q4_2019 = (self.find_prices_for_region[0] / 100)
 	end
+  #
+	# def find_solar_break_even(cost_of_solar, q1_consumption, q2_consumption, q3_consumption, q4_consumption)
+	# 	get_2019_price_per_kwh
+	# 	cost_of_solar = cost_of_solar.to_i
+	# 	quarters = create_years_array(2019, 2119)
+	# 	total_cost = 0
+	# 	break_even_quarter = 0
+	# 	quarters.each do |quarter|
+	# 		if quarter.to_s.split('.')[1].to_i == 25
+	# 			total_cost += self.q2_2019 * q2_consumption
+	# 			break_even_quarter = quarter
+	# 			break if total_cost > cost_of_solar
+	# 		elsif quarter.to_s.split('.')[1].to_i == 5
+	# 			total_cost += self.q3_2019 * q3_consumption
+	# 			break_even_quarter = quarter
+	# 			break if total_cost > cost_of_solar
+	# 		elsif quarter.to_s.split('.')[1].to_i == 75
+	# 			total_cost += self.q4_2019 * q4_consumption
+	# 			break_even_quarter = quarter
+	# 			break if total_cost > cost_of_solar
+	# 		else
+	# 			total_cost += self.q1_2019 * q1_consumption
+	# 			break_even_quarter = quarter
+	# 			break if total_cost > cost_of_solar
+	# 		end
+	# 	end
+	# 	break_even_quarter
+	# end
+  #
+  #
+	# def return_revenue_by_year(cost_of_solar, year, q1_consumption, q2_consumption, q3_consumption, q4_consumption)
+	# 	get_2019_price_per_kwh
+	# 	cost_of_solar = cost_of_solar.to_i
+	# 	quarters = create_years_array(2019, year)
+	# 	total_cost = 0
+	# 	quarters.each do |quarter|
+	# 		if quarter.to_s.split('.')[1].to_i == 25
+	# 			total_cost += self.q2_2019 * q2_consumption
+	# 		elsif quarter.to_s.split('.')[1].to_i == 5
+	# 			total_cost += self.q3_2019 * q3_consumption
+	# 		elsif quarter.to_s.split('.')[1].to_i == 75
+	# 			total_cost += self.q4_2019 * q4_consumption
+	# 		else
+	# 			total_cost += self.q1_2019 * q1_consumption
+	# 		end
+	# 	end
+	# 	total_cost - cost_of_solar
+	# end
 
-	def find_solar_break_even(cost_of_solar, q1_consumption, q2_consumption, q3_consumption, q4_consumption)
-		get_2019_price_per_kwh
-		cost_of_solar = cost_of_solar.to_i
-		quarters = create_years_array(2019, 2119)
-		total_cost = 0
-		break_even_quarter = 0
-		quarters.each do |quarter|
-			if quarter.to_s.split('.')[1].to_i == 25
-				total_cost += self.q2_2019 * q2_consumption
-				break_even_quarter = quarter
-				break if total_cost > cost_of_solar
-			elsif quarter.to_s.split('.')[1].to_i == 5
-				total_cost += self.q3_2019 * q3_consumption
-				break_even_quarter = quarter
-				break if total_cost > cost_of_solar
-			elsif quarter.to_s.split('.')[1].to_i == 75
-				total_cost += self.q4_2019 * q4_consumption
-				break_even_quarter = quarter
-				break if total_cost > cost_of_solar
-			else
-				total_cost += self.q1_2019 * q1_consumption
-				break_even_quarter = quarter
-				break if total_cost > cost_of_solar
-			end
-		end
-		break_even_quarter
-	end
-
-
-	def return_revenue_by_year(cost_of_solar, year, q1_consumption, q2_consumption, q3_consumption, q4_consumption)
-		get_2019_price_per_kwh
-		cost_of_solar = cost_of_solar.to_i
-		quarters = create_years_array(2019, year)
-		total_cost = 0
-		quarters.each do |quarter|
-			if quarter.to_s.split('.')[1].to_i == 25
-				total_cost += self.q2_2019 * q2_consumption
-			elsif quarter.to_s.split('.')[1].to_i == 5
-				total_cost += self.q3_2019 * q3_consumption
-			elsif quarter.to_s.split('.')[1].to_i == 75
-				total_cost += self.q4_2019 * q4_consumption
-			else
-				total_cost += self.q1_2019 * q1_consumption
-			end
-		end
-		total_cost - cost_of_solar
-	end
-
-def solar_break_even_via_regression(cost_of_solar, q1_consumption, q2_consumption, q3_consumption, q4_consumption)
+#FIND SOLAR BREAK EVEN USING REGRESSION!
+def find_solar_break_even(cost_of_solar, q1_consumption, q2_consumption, q3_consumption, q4_consumption)
   cost_of_solar = cost_of_solar.to_i
   quarters = create_years_array(2019, 2119)
   total_cost = 0
@@ -164,7 +165,8 @@ def solar_break_even_via_regression(cost_of_solar, q1_consumption, q2_consumptio
   break_even_quarter
 end
 
-def return_revenue_by_year_via_regression(cost_of_solar, year, q1_consumption, q2_consumption, q3_consumption, q4_consumption)
+##RETURN REVENUE BY YEAR VIA REGRESSION
+def return_revenue_by_year(cost_of_solar, year, q1_consumption, q2_consumption, q3_consumption, q4_consumption)
   cost_of_solar = cost_of_solar.to_i
   quarters = create_years_array(2019, year)
   total_cost = 0
