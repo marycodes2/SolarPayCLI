@@ -16,13 +16,13 @@ def welcome
 |_______||_______||_______||__| |__||___|  |_|  |___|    |__| |__|  |___|  
 "
 	@cli.say("Welcome to:")
-	@cli.say(solar_pay)
+	@cli.say(HighLine.color(solar_pay, :yellow))
 end
 
 def start
 	welcome
-	# user = get_user_data
-	user = User.find(5)
+	user = get_user_data
+
 	menu(user)
 
 end
@@ -87,18 +87,19 @@ def get_bills
 	quarters.each_with_index do |quarter, i|
 		q =  quarter.split.last + "Q#{i+1}"
 		bill = @cli.ask("What was your bill for #{quarter}?", Integer)
-		bills[q] = bill
+		bills[q] = bill * 100 #convert to cents
 	end
 	bills
 end
 
 def menu(user)
-	@cli.say("Please choose a command:")
+	@cli.say("Hi #{user.name}, please choose a command:")
 	loop = true
 
 	while loop
 		@cli.say "\n\n"
 		@cli.choose do |menu|
+			menu.index_color  = :blue
 			menu.shell = true
 			menu.choice("Get average cost to install solar panels in your zip code") {display_avg_cost(user)}
 			menu.choice("Get your yearly power consumption") {display_consumption(user)}
@@ -134,9 +135,9 @@ def display_consumption(user)
 	consumption << user.q3_consumption
 	consumption << user.q4_consumption
 
-	total_consumption = consumption.each_with_object(0.0) do |amount, total|
+	total_consumption = consumption.inject(0.0) do |amount, total|
 		total += amount
 	end
-
-
+	@cli.say("Based on your electricity bills, you consumed")
+	@cli.say("#{total_consumption.round(3)}Kw/H over the course of the last year")
 end

@@ -13,7 +13,9 @@ class Scraper
 		tips = get_tooltips_from_page(page)
 		costs = get_costs_from_tooltips(tips)
 		@avg_cost = get_avg_cost(costs)
-
+		if !avg_cost
+			raise ArgumentError.("could not get data for this zip")
+		end
 
 	end
 
