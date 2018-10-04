@@ -5,15 +5,25 @@ require 'pry'
 @cli = HighLine.new
 
 
+
 def welcome
+	solar_pay = " _______  _______  ___      _______  ______      _______  _______  __   __
+|       ||       ||   |    |   _   ||    _ |    |       ||   _   ||  | |  |
+|  _____||   _   ||   |    |  |_|  ||   | ||    |    _  ||  |_|  ||  |_|  |
+| |_____ |  | |  ||   |    |       ||   |_||_   |   |_| ||       ||       |
+|_____  ||  |_|  ||   |___ |       ||    __  |  |    ___||       ||_     _|
+ _____| ||       ||       ||   _   ||   |  | |  |   |    |   _   |  |   |  
+|_______||_______||_______||__| |__||___|  |_|  |___|    |__| |__|  |___|  
+"
 	@cli.say("Welcome to:")
-	@cli.say("SOLAR PAY")
+	@cli.say(solar_pay)
 end
 
 def start
 	welcome
-	get_user_data
-
+	# user = get_user_data
+	user = User.find(5)
+	menu(user)
 
 end
 
@@ -39,7 +49,7 @@ def get_user_data
 	user.q4_consumption = consumption[3]
 
 	user.save
-
+	user
 end
 
 def get_name
@@ -80,4 +90,32 @@ def get_bills
 		bills[q] = bill
 	end
 	bills
+end
+
+def menu(user)
+	@cli.say("Please choose a command: (Enter 1 for options)")
+	@cli.choose do |menu|
+		# menu.prompt =
+		menu.choice(1, ) {display_choices}
+		menu.choice(:2, help: "Get average cost to install solar panels in your zip code") {display_avg_cost(user)}
+
+	end
+end
+
+
+def display_choices
+	@cli.say("Solar Pay offers the following commands")
+	@cli.say("1: Display this menu")
+	@cli.say("2: Get average cost to install solar panels in your zip code")
+	@cli.say("3: Get your yearly power consumption")
+	@cli.say("4: Get revenue from your solar panels given a year")
+	@cli.say("5: Get revenue from your solar panels each decade")
+	@cli.say("6: Get the year your solar panels pay themselves off")
+	@cli.say("7: Exit Solar Pay")
+end
+
+def display_avg_cost(user)
+	cost = user.cost
+	@cli.say("For the zip code #{cost.zip_code} the average price" )
+	@cli.say("to install solar panels is: #{cost.avg_cost}")
 end
