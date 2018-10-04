@@ -93,29 +93,50 @@ def get_bills
 end
 
 def menu(user)
-	@cli.say("Please choose a command: (Enter 1 for options)")
-	@cli.choose do |menu|
-		# menu.prompt =
-		menu.choice(1, ) {display_choices}
-		menu.choice(:2, help: "Get average cost to install solar panels in your zip code") {display_avg_cost(user)}
+	@cli.say("Please choose a command:")
+	loop = true
 
+	while loop
+		@cli.say "\n\n"
+		@cli.choose do |menu|
+			menu.shell = true
+			menu.choice("Get average cost to install solar panels in your zip code") {display_avg_cost(user)}
+			menu.choice("Get your yearly power consumption") {display_consumption(user)}
+			menu.choice("Get revenue from your solar panels given a year")
+			menu.choice("Get revenue from your solar panels each decade")
+			menu.choice("Get the year your solar panels pay themselves off")
+			menu.choice("Exit Solar Pay") {loop = false}
+		end
 	end
 end
 
 
 def display_choices
 	@cli.say("Solar Pay offers the following commands")
-	@cli.say("1: Display this menu")
-	@cli.say("2: Get average cost to install solar panels in your zip code")
-	@cli.say("3: Get your yearly power consumption")
-	@cli.say("4: Get revenue from your solar panels given a year")
-	@cli.say("5: Get revenue from your solar panels each decade")
-	@cli.say("6: Get the year your solar panels pay themselves off")
-	@cli.say("7: Exit Solar Pay")
+	@cli.say("1: Get average cost to install solar panels in your zip code")
+	@cli.say("2: Get your yearly power consumption")
+	@cli.say("3: Get revenue from your solar panels given a year")
+	@cli.say("4: Get revenue from your solar panels each decade")
+	@cli.say("5: Get the year your solar panels pay themselves off")
+	@cli.say("6: Exit Solar Pay")
 end
 
 def display_avg_cost(user)
 	cost = user.cost
 	@cli.say("For the zip code #{cost.zip_code} the average price" )
-	@cli.say("to install solar panels is: #{cost.avg_cost}")
+	@cli.say("to install solar panels is: #{cost.avg_cost} ")
+end
+
+def display_consumption(user)
+	consumption = []
+	consumption << user.q1_consumption
+	consumption << user.q2_consumption
+	consumption << user.q3_consumption
+	consumption << user.q4_consumption
+
+	total_consumption = consumption.each_with_object(0.0) do |amount, total|
+		total += amount
+	end
+
+
 end
