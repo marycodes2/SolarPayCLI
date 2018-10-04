@@ -1,5 +1,6 @@
 require 'bundler'
 require 'ruby_linear_regression'
+require 'matrix'
 Bundler.require
 
 ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: 'db/development.db')
