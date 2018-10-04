@@ -1,6 +1,9 @@
 class Region < ActiveRecord::Base
+
 	has_many :periods
 	has_many :users
+
+	attr_accessor :linear_model, :q1_2019, :q2_2019, :q3_2019, :q4_2019
 
 	def self.return_user_region(state)
 		state = state.to_s
@@ -46,51 +49,90 @@ class Region < ActiveRecord::Base
 		Period.find_prices_for_region(self.id)
 	end
 
-	def translate_bill_to_consumption(bill, period_name)
-		price = self.periods.find_by(name: period_name).price
-		consumption = bill / price
-		consumption
-	end
-
 	def find_periods_for_region
 		Period.find_periods_for_region(self.id)
 	end
 
-	def create_years
-		(1990..2019).map do |num|
-			[num, 1]
-		end
-	end
-
 	def translate_bill_to_consumption(bill, period_name)
 		price = self.periods.find_by(name: period_name).price
 		consumption = bill / price
 		consumption
 	end
 
-
-	def regression(period)
-		x_data = self.create_years
-		#prices_array
-		y_data = self.find_prices_for_region.flatten
-
-		#Create regression model
-		linear_regression = RubyLinearRegression.new
-
-		# Load training data
-		linear_regression.load_training_data(x_data, y_data)
-		#binding.pry
-
-		# Train the model using the normal equation
-		linear_regression.train_normal_equation
-		binding.pry
-
-
-		prediction_data = [period]
-
-		predicted_price = linear_regression.predict(prediction_data)
-
-
+	def create_years_array(start_year, end_year)
+		arr = (start_year..end_year).to_a
+		new_arr = []
+		arr.each do |year|
+			new_arr << year + 0.00
+			new_arr << year + 0.25
+			new_arr << year + 0.50
+			new_arr << year + 0.75
+		end
+		new_arr
 	end
 
+	def find_slope_of_region_line(year)
+		linear_model = SimpleLinearRegression.new(self)
+		y = linear_model.y_intercept + (linear_model.slope * year)
+		if y < 0
+			y = y * -1
+		else
+			y
+		end
+	end
+
+	def get_2019_price_per_kwh
+		@q1_2019 = (self.find_prices_for_region[3] / 100)
+		@q2_2019 = (self.find_prices_for_region[2] / 100)
+		@q3_2019 = (self.find_prices_for_region[1] / 100)
+		@q4_2019 = (self.find_prices_for_region[0] / 100)
+	end
+
+	def find_solar_break_even(cost_of_solar, q1_consumption, q2_consumption, q3_consumption, q4_consumption)
+		get_2019_price_per_kwh
+		cost_of_solar = cost_of_solar.to_i
+		quarters = create_years_array(2019, 2119)
+		total_cost = 0
+		break_even_quarter = 0
+		quarters.each do |quarter|
+			if quarter.to_s.split('.')[1].to_i == 25
+				total_cost += self.q2_2019 * q2_consumption
+				break_even_quarter = quarter
+				break if total_cost > cost_of_solar
+			elsif quarter.to_s.split('.')[1].to_i == 5
+				total_cost += self.q3_2019 * q3_consumption
+				break_even_quarter = quarter
+				break if total_cost > cost_of_solar
+			elsif quarter.to_s.split('.')[1].to_i == 75
+				total_cost += self.q4_2019 * q4_consumption
+				break_even_quarter = quarter
+				break if total_cost > cost_of_solar
+			else
+				total_cost += self.q1_2019 * q1_consumption
+				break_even_quarter = quarter
+				break if total_cost > cost_of_solar
+			end
+		end
+		break_even_quarter
+	end
+	>>>>>>> origin/regression
+
+	def return_revenue_by_year(cost_of_solar, year, q1_consumption, q2_consumption, q3_consumption, q4_consumption)
+		get_2019_price_per_kwh
+		cost_of_solar = cost_of_solar.to_i
+		quarters = create_years_array(2019, year)
+		total_cost = 0
+		quarters.each do |quarter|
+			if quarter.to_s.split('.')[1].to_i == 25
+				total_cost += self.q2_2019 * q2_consumption
+			elsif quarter.to_s.split('.')[1].to_i == 5
+				total_cost += self.q3_2019 * q3_consumption
+			elsif quarter.to_s.split('.')[1].to_i == 75
+				total_cost += self.q4_2019 * q4_consumption
+			else
+				total_cost += self.q1_2019 * q1_consumption
+			end
+		end
+		total_cost - cost_of_solar
+	end
 end
