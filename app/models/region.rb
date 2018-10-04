@@ -115,7 +115,7 @@ class Region < ActiveRecord::Base
 		end
 		break_even_quarter
 	end
-	>>>>>>> origin/regression
+
 
 	def return_revenue_by_year(cost_of_solar, year, q1_consumption, q2_consumption, q3_consumption, q4_consumption)
 		get_2019_price_per_kwh
