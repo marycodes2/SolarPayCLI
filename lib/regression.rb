@@ -5,7 +5,7 @@ class SimpleLinearRegression
 
   def initialize(region)
     @region = region
-    @xs = @region.create_years_array
+    @xs = @region.create_years_array(1990, 2019)
     @ys = @region.find_prices_for_region
     if @xs.length != @ys.length
       raise "Unbalanced data. xs need to be same length as ys"

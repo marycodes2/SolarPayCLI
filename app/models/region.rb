@@ -2,6 +2,8 @@ class Region < ActiveRecord::Base
   has_many :periods
   has_many :users
 
+  attr_accessor :linear_model, :q1_2019, :q2_2019, :q3_2019, :q4_2019
+
   def self.return_user_region(state)
     state = state.to_s
     state = state.upcase
@@ -56,8 +58,8 @@ class Region < ActiveRecord::Base
     consumption
   end
 
-  def create_years_array
-    arr = (1990..2019).to_a
+  def create_years_array(start_year, end_year)
+    arr = (start_year..end_year).to_a
     new_arr = []
     arr.each do |year|
       new_arr << year + 0.00
@@ -71,11 +73,52 @@ class Region < ActiveRecord::Base
   def find_slope_of_region_line(year)
     linear_model = SimpleLinearRegression.new(self)
     y = linear_model.y_intercept + (linear_model.slope * year)
-    y
+    if y < 0
+      y = y * -1
+    else
+      y
+    end
   end
 
-  def find_solar_break_even(price_of_solar, q1_consumption, q2_consumption, q3_consumption, q4_consumption)
-    
+  def get_2019_price_per_kwh
+    @q1_2019 = (self.find_prices_for_region[3] / 100)
+    @q2_2019 = (self.find_prices_for_region[2] / 100)
+    @q3_2019 = (self.find_prices_for_region[1] / 100)
+    @q4_2019 = (self.find_prices_for_region[0] / 100)
+  end
+
+  def find_solar_break_even(cost_of_solar, q1_consumption, q2_consumption, q3_consumption, q4_consumption)
+    get_2019_price_per_kwh
+    cost_of_solar = cost_of_solar.to_i
+    quarters = create_years_array(2019, 2119)
+    total_cost = 0
+    break_even_quarter = 0
+      quarters.each do |quarter|
+        if quarter.to_s.split('.')[1].to_i == 25
+          total_cost += self.q2_2019 * q2_consumption
+          break_even_quarter = quarter
+          break if total_cost > cost_of_solar
+        elsif quarter.to_s.split('.')[1].to_i == 5
+          total_cost += self.q3_2019 * q3_consumption
+          break_even_quarter = quarter
+          break if total_cost > cost_of_solar
+        elsif quarter.to_s.split('.')[1].to_i == 75
+          total_cost += self.q4_2019 * q4_consumption
+          break_even_quarter = quarter
+          break if total_cost > cost_of_solar
+        else
+          total_cost += self.q1_2019 * q1_consumption
+          puts "slope of region"
+          puts self.q1_2019
+          puts "consumption"
+          puts q1_consumption
+          puts "total_cost"
+          puts total_cost
+          break_even_quarter = quarter
+          break if total_cost > cost_of_solar
+        end
+      end
+    break_even_quarter
   end
 
 end
