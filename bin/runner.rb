@@ -22,7 +22,6 @@ end
 def start
 	welcome
 	user = get_user_data
-
 	menu(user)
 
 end
@@ -103,9 +102,9 @@ def menu(user)
 			menu.shell = true
 			menu.choice("Get average cost to install solar panels in your zip code") {display_avg_cost(user)}
 			menu.choice("Get your yearly power consumption") {display_consumption(user)}
-			menu.choice("Get revenue from your solar panels given a year")
-			menu.choice("Get revenue from your solar panels each decade")
-			menu.choice("Get the year your solar panels pay themselves off")
+			menu.choice("Get revenue from your solar panels given a year") {display_revenue_from_year(user)}
+			menu.choice("Get revenue from your solar panels each decade") {display_revenue_each_decade(user)}
+			menu.choice("Get the year your solar panels pay themselves off") {display_breakpoint(user)}
 			menu.choice("Exit Solar Pay") {loop = false}
 		end
 	end
@@ -125,7 +124,7 @@ end
 def display_avg_cost(user)
 	cost = user.cost
 	@cli.say("For the zip code #{cost.zip_code} the average price" )
-	@cli.say("to install solar panels is: #{cost.avg_cost} ")
+	@cli.say("to install solar panels is: #{cost.avg_cost.round(3)} ")
 end
 
 def display_consumption(user)
@@ -140,4 +139,38 @@ def display_consumption(user)
 	end
 	@cli.say("Based on your electricity bills, you consumed")
 	@cli.say("#{total_consumption.round(3)}Kw/H over the course of the last year")
+end
+
+
+def display_revenue_from_year(user)
+	cost = user.cost.avg_cost
+	year = @cli.ask("What year would you like to know the revenue of your panels?", Integer) { |r| r.validate = /^(2019|20[2-9][0-9]|210[0-9]|211[0-9])$/}
+	q1, q2, q3, q4 = user.q1_consumption, user.q2_consumption, user.q3_consumption, user.q4_consumption
+
+	revenue = user.region.return_revenue_by_year(cost, year, q1, q2, q3, q4)
+
+	@cli.say("In the year #{year}, you will have made $#{revenue.round(3)} from your solar panels")
+
+end
+
+def display_revenue_each_decade(user)
+	cost = user.cost.avg_cost
+	years = [2019, 2029, 2039, 2049, 2059]
+	years.each do |year|
+		q1, q2, q3, q4 = user.q1_consumption, user.q2_consumption, user.q3_consumption, user.q4_consumption
+
+		revenue = user.region.return_revenue_by_year(cost, year, q1, q2, q3, q4)
+
+		@cli.say("In the year #{year}, you will have made $#{revenue.round(3)} from your solar panels")
+	end
+end
+
+def display_breakpoint(user)
+	cost = user.cost.avg_cost
+	q1, q2, q3, q4 = user.q1_consumption, user.q2_consumption, user.q3_consumption, user.q4_consumption
+	year = user.region.find_solar_break_even(cost, q1, q2, q3, q4)
+	info = year.to_s.split(".")
+	year = info[0]
+	q = (("0." + info.last).to_f + 0.25)  * 4
+	@cli.say("In Q#{q.to_i} of #{year}, your solar panels will pay themselves off!")
 end
