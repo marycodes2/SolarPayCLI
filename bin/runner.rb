@@ -31,7 +31,6 @@ def start_menu
 end
 
 def start
-	binding.pry
 	welcome
 	user = get_user_data
 	start_menu
@@ -93,11 +92,12 @@ def get_bills
 	#store results in bills
 	bills = {}
 	#prompt user pt1
-	@cli.say("Please enter an average monthly electricity bill in each timeframe, as integers")
+	@cli.say("Please enter an average monthly electricity bill in each timeframe, as whole numbers")
 
 	#prompt for each quarter
 	quarters.each_with_index do |quarter, i|
 		q =  quarter.split.last + "Q#{i+1}"
+		@cli.say("\n")
 		bill = @cli.ask("What was your average monthly bill during #{quarter}?", Integer)
 		bills[q] = bill * 100 * 3 #convert to cents
 	end
@@ -137,8 +137,9 @@ end
 
 def display_avg_cost(user)
 	cost = user.cost
+	avg_cost  = HighLine.color(cost.avg_cost.round(2).to_s, :green)
 	@cli.say("For the zip code #{cost.zip_code} the average price" )
-	@cli.say("to install solar panels is: #{cost.avg_cost.round(3)} ")
+	@cli.say("to install solar panels is: $" + avg_cost)
 end
 
 def display_consumption(user)
