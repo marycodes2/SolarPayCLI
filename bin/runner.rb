@@ -19,10 +19,22 @@ def welcome
 	@cli.say(HighLine.color(solar_pay, :yellow))
 end
 
+def start_menu
+	welcome = "
+ _ _ _ _____ __    _____ _____ _____ _____ 
+| | | |   __|  |  |     |     |     |   __|
+| | | |   __|  |__|   --|  |  | | | |   __|
+|_____|_____|_____|_____|_____|_|_|_|_____|
+                                           "
+	@cli.say(HighLine.color(welcome, :green) + "\n")
+
+end
+
 def start
+	binding.pry
 	welcome
-	# user = get_user_data
-	user = User.find(12)
+	user = get_user_data
+	start_menu
 	menu(user)
 
 end
@@ -81,13 +93,13 @@ def get_bills
 	#store results in bills
 	bills = {}
 	#prompt user pt1
-	@cli.say("Please enter your average monthly electricity bill as integers")
+	@cli.say("Please enter an average monthly electricity bill in each timeframe, as integers")
 
 	#prompt for each quarter
 	quarters.each_with_index do |quarter, i|
 		q =  quarter.split.last + "Q#{i+1}"
-		bill = @cli.ask("What was your average mongthly bill during #{quarter}?", Integer)
-		bills[q] = bill * 100 #convert to cents
+		bill = @cli.ask("What was your average monthly bill during #{quarter}?", Integer)
+		bills[q] = bill * 100 * 3 #convert to cents
 	end
 	bills
 end
