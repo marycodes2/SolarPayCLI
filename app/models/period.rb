@@ -14,6 +14,6 @@ class Period < ActiveRecord::Base
     periods_instance_array.map do |period_instance|
       period_instance.name
     end
-  end 
+  end
 
 end
