@@ -19,9 +19,22 @@ def welcome
 	@cli.say(HighLine.color(solar_pay, :yellow))
 end
 
+def start_menu
+	welcome = "
+ _ _ _ _____ __    _____ _____ _____ _____ 
+| | | |   __|  |  |     |     |     |   __|
+| | | |   __|  |__|   --|  |  | | | |   __|
+|_____|_____|_____|_____|_____|_|_|_|_____|
+                                           "
+	@cli.say(HighLine.color(welcome, :green) + "\n")
+
+end
+
 def start
+	binding.pry
 	welcome
 	user = get_user_data
+	start_menu
 	menu(user)
 
 end
@@ -67,7 +80,7 @@ def get_cost(zip_code)
 end
 
 def get_state
-	@cli.ask("What state do you live in?") {|r| r.validate = /^\w{2}$/}
+	@cli.ask("Enter your 2 letter state abbreviation. Ex: MD for Maryland" ) {|r| r.validate = /^\w{2}$/}
 end
 
 def get_region(state)
@@ -80,13 +93,13 @@ def get_bills
 	#store results in bills
 	bills = {}
 	#prompt user pt1
-	@cli.say("Please enter your most recent quarterly electricity bills as integers")
+	@cli.say("Please enter an average monthly electricity bill in each timeframe, as integers")
 
 	#prompt for each quarter
 	quarters.each_with_index do |quarter, i|
 		q =  quarter.split.last + "Q#{i+1}"
-		bill = @cli.ask("What was your bill for #{quarter}?", Integer)
-		bills[q] = bill * 100 #convert to cents
+		bill = @cli.ask("What was your average monthly bill during #{quarter}?", Integer)
+		bills[q] = bill * 100 * 3 #convert to cents
 	end
 	bills
 end
@@ -102,11 +115,12 @@ def menu(user)
 			menu.shell = true
 			menu.choice("Get average cost to install solar panels in your zip code") {display_avg_cost(user)}
 			menu.choice("Get your yearly power consumption") {display_consumption(user)}
-			menu.choice("Get revenue from your solar panels given a year") {display_revenue_from_year(user)}
-			menu.choice("Get revenue from your solar panels each decade") {display_revenue_each_decade(user)}
 			menu.choice("Get the year your solar panels pay themselves off") {display_breakpoint(user)}
-			menu.choice("Exit Solar Pay") {loop = false}
+			menu.choice("Get revenue from your solar panels each decade") {display_revenue_each_decade(user)}
+			menu.choice("Get revenue from your solar panels given a year") {display_revenue_from_year(user)}
+			menu.choice("Exit Solar Pay \n") {loop = false}
 		end
+		sleep(5) if (loop)
 	end
 end
 
@@ -138,7 +152,7 @@ def display_consumption(user)
 		total += amount
 	end
 	@cli.say("Based on your electricity bills, you consumed")
-	@cli.say("#{total_consumption.round(3)}Kw/H over the course of the last year")
+	@cli.say("#{total_consumption.round}Kw/H over the course of the last year")
 end
 
 
@@ -147,9 +161,10 @@ def display_revenue_from_year(user)
 	year = @cli.ask("What year would you like to know the revenue of your panels?", Integer) { |r| r.validate = /^(2019|20[2-9][0-9]|210[0-9]|211[0-9])$/}
 	q1, q2, q3, q4 = user.q1_consumption, user.q2_consumption, user.q3_consumption, user.q4_consumption
 
-	revenue = user.region.return_revenue_by_year(cost, year, q1, q2, q3, q4)
+	revenue = user.region.return_revenue_by_year(cost, year, q1, q2, q3, q4).round(2)
+	revenue = "$" + (revenue > 0 ? HighLine.color(revenue.to_s, :green) : HighLine.color(revenue.to_s, :red))
 
-	@cli.say("In the year #{year}, you will have made $#{revenue.round(3)} from your solar panels")
+	@cli.say("In the year #{year}, you will have made " + revenue + " from your solar panels")
 
 end
 
@@ -159,9 +174,10 @@ def display_revenue_each_decade(user)
 	years.each do |year|
 		q1, q2, q3, q4 = user.q1_consumption, user.q2_consumption, user.q3_consumption, user.q4_consumption
 
-		revenue = user.region.return_revenue_by_year(cost, year, q1, q2, q3, q4)
+		revenue = user.region.return_revenue_by_year(cost, year, q1, q2, q3, q4).round(2)
+		revenue = "$" + (revenue > 0 ? HighLine.color(revenue.to_s, :green) : HighLine.color(revenue.to_s, :red))
 
-		@cli.say("In the year #{year}, you will have made $#{revenue.round(3)} from your solar panels")
+		@cli.say("In the year #{year}, you will have made " + revenue +" from your solar panels")
 	end
 end
 
