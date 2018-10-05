@@ -1,7 +1,7 @@
 require 'rest-client'
 require 'pry'
 #api link: https://www.eia.gov/opendata/qb.php?category=1039863
-api_key = 'ebd1dbc8bf695423c209d37473578b0d'
+api_key = gets.chomp
 
 series_id_list = ['STEO.ESRCU_HAK.Q', 'STEO.ESRCU_ENC.Q', 'STEO.ESRCU_ESC.Q', 'STEO.ESRCU_MAC.Q', 'STEO.ESRCU_MTN.Q', 'STEO.ESRCU_NEC.Q', 'STEO.ESRCU_PAC.Q', 'STEO.ESRCU_SAC.Q', 'STEO.ESRCU_WNC.Q', 'STEO.ESRCU_WSC.Q']
 
