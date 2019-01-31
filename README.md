@@ -1,1 +1,2 @@
-CLI app
+
+![](https://gfycat.com/wavyscarcebarasingha)
