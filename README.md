@@ -3,6 +3,5 @@ This command line app uses Energy Information Administration and Energy Sage dat
 
 ![](SolarPayDemo.gif)
 
-<br></br>
 <h2>Authors</h2>
 Mary Beliveau && Tom Giagtzoglou
